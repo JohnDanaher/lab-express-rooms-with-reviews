@@ -1,0 +1,24 @@
+<div id="form">
+  <h2>Edit Room</h2>
+  <form action="/room/edit/{{_id}}" method="POST">
+
+    <label> Name
+      <input type="text" name="name" placeholder="{{name}}" />
+    </label>
+
+    <label> Description
+      <input type="text" name="description" placeholder="{{description}}" />
+    </label>
+
+    <label> Image
+      <input type="text" name="imageUrl" placeholder="{{imageUrl}}" />
+    </label>
+
+    <button type="submit">Submit edition</button>
+
+
+    {{#if errorMessage}}
+      <p class="error">{{errorMessage}}</p>
+    {{/if}}
+  </form>
+</div>

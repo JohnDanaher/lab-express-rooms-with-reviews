@@ -1,0 +1,9 @@
+<h2>Your Rooms</h2>
+<ul>
+{{#each rooms}}
+<li>{{name}}</li>
+<li>{{description}}</li>
+<li><img src="{{imageUrl}}" alt="room-image"></li>
+<li><a href="/room/edit/{{_id}}"><button>Edit room</button></a></li>
+{{/each}}
+</ul>
