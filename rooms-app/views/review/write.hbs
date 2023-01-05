@@ -1,0 +1,14 @@
+<h2>Review of Room {{name}}</h2>
+{{#each listedReview}}
+<ul>
+<li>{{comment}}</li>
+</ul>
+{{/each}}
+
+  <form action="/review/write/{{id}}" method="POST">
+<textarea name="review" rows="10" cols="50" maxlength="200"></textarea>
+<br>
+<br>
+<button type="submit">Submit review</button>
+</form>
+<a href="/review/reviews/{{id}}"><button>Read reviews</button></a>

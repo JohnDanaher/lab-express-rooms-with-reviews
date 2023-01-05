@@ -12,31 +12,30 @@ router.get("/create", isLoggedIn, (req, res) => {
 
 router.post("/create", isLoggedIn, (req, res) => {
     const { name, description, imageUrl } = req.body;
+    const creator = req.session.currentUser;
 
-    Room.create({ name, description, imageUrl })
+    Room.create({ name, description, imageUrl, owner: creator._id })
           .then(newRoom => {
             res.redirect('/room/list')
           })
           .catch(error => console.log(`Error while creating a new room: ${error}`));
 });
 
-router.get("/list", isLoggedIn, (req, res) => {
-    // Room.find()
-    // .then(rooms => res.render("room/list", rooms))
+router.get("/list", (req, res) => {
+
     Room.find()
       .then(roomList => {
-        console.log(roomList);
         res.render('room/list', { rooms: roomList });
       })
       .catch(err => console.log(`Error while getting the rooms from the DB: ${err}`));
 });
+
 
 router.get('/edit/:id', isLoggedIn, (req, res) => {
     const {id} = req.params;
 
     Room.findById(id)
     .then(roomToEdit => {
-        console.log(id);
         res.render('room/edit', roomToEdit)
     })
     .catch(error => console.log(error))
@@ -44,13 +43,34 @@ router.get('/edit/:id', isLoggedIn, (req, res) => {
 
 router.post("/edit/:id", isLoggedIn, (req, res) => {
     const { name, description, imageUrl } = req.body;
+    const user = req.session.currentUser;
     const {id} = req.params;
 
     Room.findByIdAndUpdate(id, { name, description, imageUrl }, { new: true })
-    .then(() => res.redirect(`/room/list`))
+    .then((room) => {
+        if(room.owner._id.toString() == user._id){
+        res.redirect(`/room/list`)
+        } else {
+            res.render("auth/login")
+        }
+    })
     .catch(error => console.log(`Error while updating a single movie: ${error}`));
 });
 
+router.post('/delete/:id', (req, res) => {
+    const { id } = req.params;
+    const user = req.session.currentUser;
 
+    Room.findById(id)
+    .then((room) => {
+        if(room.owner._id.toString() == user._id){
+            Room.findByIdAndRemove(id)
+            .then(() => res.redirect('/room/list'))
+        } else {
+            res.render("auth/login")
+        }
+    })
+    .catch(err => console.log(err))
+})
 
 module.exports = router;
